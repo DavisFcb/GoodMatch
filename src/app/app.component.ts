@@ -16,7 +16,7 @@ export class AppComponent {
   femaleList: any = new Set();
   matchResults = '';
   displayResults: any[] = [];
-
+  resultsData: any[] = [];
 
   constructor(private papa: Papa, private sanitizer: DomSanitizer) { }
 
@@ -49,18 +49,13 @@ export class AppComponent {
     );
 
     var percentage = this.getPercentage(charCount);
-    if (parseInt(percentage) >= 80) {
-      console.log(this.matchResults);
-      this.displayResults.push(male + " matches " + female + " " + percentage + "%, good match\n");
-    }
-    else {
-      console.log(this.matchResults);
-      this.displayResults.push(male + " matches " + female + " " + percentage + "%\n");
-    }
-
-    const blob = new Blob(this.displayResults, { type: 'application/octet-stream' });
-    this.file = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(blob));
-
+    let sortData =
+    {
+      male: male,
+      female: female,
+      percentage: percentage,
+    };
+    this.resultsData.push(sortData)
   }
 
   getPercentage(textValues: any): any {
@@ -119,8 +114,6 @@ export class AppComponent {
   }
 
   groupGender() {
-    let male;
-    let female;
     for (var person of this.finalData) {
 
       if (person.Gender == 'f') {
@@ -138,6 +131,40 @@ export class AppComponent {
         this.matchPercentage(male, female)
       }
     }
+
+    this.resultsData = this.resultsData.sort(function (a, b) {
+
+      if (a.percentage > b.percentage) {
+        return -1;
+      }
+      if (a.percentage < b.percentage) {
+        return 1;
+      }
+
+      if (a.male < b.male) {
+        return -1;
+      }
+      if (a.male > b.male) {
+        return 1;
+      }
+
+      return 0;
+
+    });
+
+    for (var data of this.resultsData) {
+
+      if (parseInt(data.percentage) >= 80) {
+        console.log(this.matchResults);
+        this.displayResults.push(data.male + " matches " + data.female + " " + data.percentage + "%, good match\n");
+      }
+      else {
+        console.log(this.matchResults);
+        this.displayResults.push(data.male + " matches " + data.female + " " + data.percentage + "%\n");
+      }
+    }
+    const blob = new Blob(this.displayResults, { type: 'application/octet-stream' });
+    this.file = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(blob));
   }
 
 }
