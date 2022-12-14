@@ -1,0 +1,21 @@
+.margin-left-55 {
+    margin-left: 55px;
+}
+
+.padding-top-20 {
+    padding-top: 20px;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.text-center {
+    text-align: center;
+}
